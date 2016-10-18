@@ -57,9 +57,10 @@ int main(int argc, char **argv)
     mavros_msgs::CommandBool arm_cmd;
     arm_cmd.request.value = true;
 
-    ros::Time last_request  = ros::Time::now();
-	ros::Time statusUpdate  = ros::Time::now();
-	ros::Time waitingForOFF = ros::Time::now();
+    ros::Time last_request    = ros::Time::now();
+	ros::Time statusUpdate    = ros::Time::now();
+	ros::Time waitingForOFF   = ros::Time::now();
+	ros::Time simulateFailure = ros::Time::now();
     while(ros::ok())
 	{
 		/* This code overrides the RC mode and is dangerous when performing tests: re-use in real flight tests*/
@@ -101,7 +102,14 @@ int main(int argc, char **argv)
 				statusUpdate = ros::Time::now();
 			}
         }
+
+		/* Not sending Pose setpoints with the required frequency will trigger a failure: 
+		   The failure responce is determined in COM_OBL_RC_ACT parameter in the ground control / FCU.
+		   We tested the switching to manual mode after failure and it worked !
+		*/
+
         local_pos_pub.publish(pose);
+
         ros::spinOnce();
         rate.sleep();
     }
