@@ -48,7 +48,7 @@ class Vision2FCU:
         self.currentPose.header.frame_id = "uav_frame"
         self.currentPose.header.stamp = rospy.Time.now()
         self.vision_pub.publish(self.currentPose)
-        print self.currentPose.pose
+        #print self.currentPose.pose
 
 if __name__ == '__main__':
     try:

@@ -41,10 +41,11 @@ int main(int argc, char **argv)
     geometry_msgs::PoseStamped pose;
     pose.pose.position.x = 0;
     pose.pose.position.y = 0;
-    pose.pose.position.z = 2;
+    pose.pose.position.z = 0.684;
 
     //send a few setpoints before starting
-    for(int i = 100; ros::ok() && i > 0; --i){
+    for(int i = 100; ros::ok() && i > 0; --i)
+	{
         local_pos_pub.publish(pose);
         ros::spinOnce();
         rate.sleep();
@@ -56,29 +57,51 @@ int main(int argc, char **argv)
     mavros_msgs::CommandBool arm_cmd;
     arm_cmd.request.value = true;
 
-    ros::Time last_request = ros::Time::now();
-
-    while(ros::ok()){
-        if( current_state.mode != "OFFBOARD" &&
-            (ros::Time::now() - last_request > ros::Duration(5.0))){
-            if( set_mode_client.call(offb_set_mode) &&
-                offb_set_mode.response.success){
+    ros::Time last_request  = ros::Time::now();
+	ros::Time statusUpdate  = ros::Time::now();
+	ros::Time waitingForOFF = ros::Time::now();
+    while(ros::ok())
+	{
+		/* This code overrides the RC mode and is dangerous when performing tests: re-use in real flight tests*/
+		/*
+        if( current_state.mode != "OFFBOARD" && (ros::Time::now() - last_request > ros::Duration(5.0)))
+		{
+            if( set_mode_client.call(offb_set_mode) && offb_set_mode.response.success)
+			{
                 ROS_INFO("Offboard enabled");
             }
             last_request = ros::Time::now();
-        } else {
-            if( !current_state.armed &&
-                (ros::Time::now() - last_request > ros::Duration(5.0))){
-                if( arming_client.call(arm_cmd) &&
-                    arm_cmd.response.success){
-                    ROS_INFO("Vehicle armed");
+        }
+		*/
+		if( current_state.mode != "OFFBOARD")
+		{
+			if(ros::Time::now() - waitingForOFF > ros::Duration(0.5))
+			{
+				std::cout<<"USE RC to set the system in offboard mode => Current Mode is: "<<current_state.mode<<"\n"; fflush(stdout);
+				waitingForOFF = ros::Time::now();
+			}			
+		}
+		else 
+		{
+            if( !current_state.armed && (ros::Time::now() - last_request > ros::Duration(5.0)))
+			{
+                if( arming_client.call(arm_cmd) && arm_cmd.response.success)
+				{
+                    ROS_INFO("ARMING Command send through mavros, check messages related to safety switch");
                 }
+				else
+				{
+					ROS_INFO("Sending Arming message FAILED!");
+				}
                 last_request = ros::Time::now();
             }
+			if(ros::Time::now() - statusUpdate > ros::Duration(1.0))
+			{
+				std::cout<<"Current Mode is: "<<current_state.mode<<"\n"; fflush(stdout);
+				statusUpdate = ros::Time::now();
+			}
         }
-
         local_pos_pub.publish(pose);
-
         ros::spinOnce();
         rate.sleep();
     }
