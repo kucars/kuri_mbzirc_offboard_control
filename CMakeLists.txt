@@ -38,3 +38,7 @@ target_link_libraries(offb_node_mod ${catkin_LIBRARIES})
 
 add_executable(offb_node_mod_zcons src/offb_node_mod_zcons.cpp)
 target_link_libraries(offb_node_mod_zcons ${catkin_LIBRARIES})
+
+add_executable(offb_node_pid src/offb_node_pid.cpp)
+target_link_libraries(offb_node_pid ${catkin_LIBRARIES})
+

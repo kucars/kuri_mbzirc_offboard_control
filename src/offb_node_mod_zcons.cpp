@@ -13,9 +13,9 @@
 #include <iostream>
 #include <stdio.h>
 
-mavros_msgs::State current_state;
-void state_cb(const mavros_msgs::State::ConstPtr& msg){
-    current_state = *msg;
+mavros_msgs::State currentState;
+void mavrosStateCallback(const mavros_msgs::State::ConstPtr& msg){
+    currentState = *msg;
 }
 
 visualization_msgs::Marker current_pose;
@@ -37,7 +37,7 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
 
     ros::Subscriber state_sub = nh.subscribe<mavros_msgs::State>
-            ("mavros/state", 10, state_cb);
+            ("mavros/state", 10, mavrosStateCallback);
     ros::Subscriber pose_sub = nh.subscribe<visualization_msgs::Marker>
             ("visualization_marker", 10, pose_cb);
     ros::Publisher local_pos_pub = nh.advertise<geometry_msgs::PoseStamped>
@@ -51,7 +51,7 @@ int main(int argc, char **argv)
     ros::Rate rate(20.0);
 
     // wait for FCU connection
-    while(ros::ok() && current_state.connected){
+    while(ros::ok() && currentState.connected){
         ros::spinOnce();
 	// ros::spin();
         rate.sleep();
@@ -79,7 +79,7 @@ int main(int argc, char **argv)
     ros::Time last_request = ros::Time::now();
     std::cout<<"I am hhere\n";
     while(ros::ok()){
-        if( current_state.mode != "OFFBOARD" &&
+        if( currentState.mode != "OFFBOARD" &&
             (ros::Time::now() - last_request > ros::Duration(5.0))){
             if( set_mode_client.call(offb_set_mode) &&
                 offb_set_mode.response.success){
@@ -87,7 +87,7 @@ int main(int argc, char **argv)
             }
             last_request = ros::Time::now();
         } else {
-            if( !current_state.armed &&
+            if( !currentState.armed &&
                 (ros::Time::now() - last_request > ros::Duration(5.0))){
                 if( arming_client.call(arm_cmd) &&
                     arm_cmd.response.success){
