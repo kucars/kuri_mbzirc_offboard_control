@@ -1,0 +1,10 @@
+uav_id: -1
+path_file: real_test
+distance_limit: 0.5
+step_size: 0.4
+all_auto: true
+offboard_set_mode: "OFFBOARD"
+arm_command: true
+tolerance_position: 0.2 
+tolerance_yaw: 0.2
+

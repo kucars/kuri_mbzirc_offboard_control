@@ -14,14 +14,19 @@ find_package(catkin REQUIRED COMPONENTS
   tf
   tf_conversions
   eigen_conversions
+  mavros_msgs
+  roslib
 )
+find_package(Boost REQUIRED COMPONENTS thread random)
 
 catkin_package(
 INCLUDE_DIRS include
+CATKIN_DEPENDS roscpp std_msgs sensor_msgs mavros_msgs geometry_msgs roslib
 )
 
 include_directories(include
 ${catkin_INCLUDE_DIRS}
+${Boost_INCLUDE_DIRS}
 )
 
 add_executable(mission_follow src/mission_follow.cpp)
@@ -35,4 +40,7 @@ target_link_libraries(offb_node ${catkin_LIBRARIES})
 
 add_executable(offb_node_pid src/offb_node_pid.cpp)
 target_link_libraries(offb_node_pid ${catkin_LIBRARIES})
+
+add_executable(offboard_position_control src/offboard_position_control.cpp)
+target_link_libraries(offboard_position_control ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
