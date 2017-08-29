@@ -53,6 +53,7 @@ std::string                 offbMode;
 bool                        armFlag;
 std::string                 pathFile;
 bool                        allAuto;
+bool                        discFlag;
 int                         uavID;
 float                       stepSize;
 
@@ -179,6 +180,7 @@ int main(int argc, char **argv)
     ros::param::param<bool>("~arm_command", armFlag, true);
     ros::param::param<float>("~tolerance_position", tolerance, 0.15);
     ros::param::param<float>("~tolerance_yaw", toleranceO, 0.2);
+    ros::param::param<bool>("~discretize", discFlag, false);
 
     //display the paramter
     std::cout<<" ******** Offboard Paramters ******* "<<std::endl;
@@ -190,6 +192,7 @@ int main(int argc, char **argv)
     std::cout<<"arm_command: \t\t"<<armFlag <<std::endl;
     std::cout<<"tolerance_position: \t"<<tolerance <<std::endl;
     std::cout<<"tolerance_yaw: \t\t"<<toleranceO <<std::endl;
+    std::cout<<"discretize: \t\t"<<discFlag <<std::endl;
     std::cout<<" \n\n "<<std::endl;
 
 
@@ -240,7 +243,7 @@ int main(int argc, char **argv)
         pose.orientation.w = tf_q.getW();
 
         //divide the path by checking the distance to the next point and comparing it to fixed distance
-        if(num>0)
+        if(num>0 && discFlag)
         {
             //copy of the last pushed waypoint (the waypoint before the next one)
             // waypoint[index] -----new1-----new2-----new3------pose
