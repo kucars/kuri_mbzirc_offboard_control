@@ -332,13 +332,13 @@ int main(int argc, char **argv)
         if (allAuto)
         {
             if( currentState.mode != "OFFBOARD" && (ros::Time::now() - lastRequest > ros::Duration(5.0))){
-                if( setModeClient.call(offbSetMode) && offbSetMode.response.success){
+                if( setModeClient.call(offbSetMode) && offbSetMode.response.mode_sent){
                     ROS_INFO("Offboard enabled");
                 }
                 lastRequest = ros::Time::now();
             } else {
                 if( !currentState.armed && (ros::Time::now() - lastRequest > ros::Duration(5.0))){
-                    if( armingClient.call(armCmd) && armCmd.response.success){
+                    if( armingClient.call(armCmd) && armCmd.response.mode_sent){
                         ROS_INFO("Vehicle armed");
                     }
                     lastRequest = ros::Time::now();

@@ -79,7 +79,7 @@ int main(int argc, char **argv)
     // This code overrides the RC mode and is dangerous when performing tests: re-use in real flight tests
     if( currentState.mode != "AUTO.MISSION" && (ros::Time::now() - lastRequestT > ros::Duration(5.0)))
     {
-      if( setModeClient.call(setMode) && setMode.response.success)
+      if( setModeClient.call(setMode) && setMode.response.mode_sent)
       {
         ROS_INFO("AUTO enabled");
       }
