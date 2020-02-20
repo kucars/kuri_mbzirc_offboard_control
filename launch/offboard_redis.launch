@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+
+  <node pkg="kuri_mbzirc_offboard_control" type="offboard_redis" name="offboard_redis" output="screen" >
+    <rosparam file="$(find kuri_mbzirc_offboard_control)/config/offboard_params.yaml"/>
+  </node>
+  
+</launch>

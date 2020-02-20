@@ -44,3 +44,5 @@ target_link_libraries(offb_node_pid ${catkin_LIBRARIES})
 add_executable(offboard_position_control src/offboard_position_control.cpp)
 target_link_libraries(offboard_position_control ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
+add_executable(offboard_redis src/offboard_redis.cpp)
+target_link_libraries(offboard_redis ${catkin_LIBRARIES} ${Boost_LIBRARIES})
